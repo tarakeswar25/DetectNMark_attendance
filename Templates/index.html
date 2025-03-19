@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<form action="/login" method="POST"><button type="submit">Faculty login</button></form>
+
+    <h1>Face Recognition Attendance System</h1>
+
+    <!-- Button to start recognition -->
+    <br>
+    <button onclick="startRecognition()">Start Recognition</button>
+    <form action="/train" method="POST"><button type="submit">Start Training</button></form>
+
+    <!-- Display result -->
+    <p id="result"></p>
+
+    <script>
+        async function startRecognition() {
+            document.getElementById("result").innerText = "Recognizing face...";
+
+            // Call the backend Python script for face recognition
+            const response = await fetch("/recognize", { method: "POST" });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("result").innerText = `Attendance Marked for ${data.name} At ${data.time} for the period ${data.period}`;
+            } else {
+                document.getElementById("result").innerText = "Face not recognized!";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        .form-wrapper {
+            width: 350px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            width: 48%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-container {
+            display: none;
+        }
+        .form-container.active {
+            display: block;
+        }
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #uploadedImage {
+            margin-top: 10px;
+            max-width: 200px;
+            display: none;
+        }
+        #imageButton {
+            cursor: pointer;
+        }
+        #imageInput {
+            display: none;
+        }
+        #video {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-wrapper">
+        <!-- Buttons for switching between forms -->
+        <div class="button-container">
+            <button onclick="switchToUpload()">Upload</button>
+            <button onclick="switchToCamera()">Start Camera</button>
+        </div>
+
+        <!-- Upload Form (Default Visible) -->
+        <div class="form-container active" id="uploadForm">
+            <h2>Upload Form</h2>
+            <form id="studentForm" enctype="multipart/form-data">
+                <!-- Student Name Input -->
+                <div class="container">
+                    <label for="studentName">Student Name:</label>
+                    <input type="text" class="studentName" name="studentName" id="studentName" required><br><br>
+                    <label for="year">Year:</label>
+        <select name="year" id="year">
+
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+        </select>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="container">
+                    <label for="imageUpload">Upload Image:</label>
+                    <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+                    <input type="image" id="imageButton" src="https://via.placeholder.com/150" alt="Upload Image" onclick="handleImageClick(event)">
+                    <br>
+                    <img id="uploadedImage" src="" alt="Uploaded Image">
+                </div>
+
+                <!-- Train Button -->
+                <div class="container">
+                    <button type="button" onclick="train()">Train</button>
+                </div>
+                </form>
+
+                <form action="/" ><input type="submit" value="Back"></form>
+
+        </div>
+
+        <!-- Camera Form -->
+        <div class="form-container" id="cameraForm">
+            <h2>Camera Form</h2>
+            <form id="cameraFormContent">
+                <!-- Student Name Input
+                <div class="container">
+
+                    <input type="text" class="studentNameCamera" name="studentNameCamera" required>
+                </div>
+
+                <-- Camera and Video Access -->
+
+</form>
+                <form action="/capture" method="POST">
+                    <label for="studentNameCamera" >Student Name:</label>
+                    <input type="text" id="studentNameCamera" name="studentName" required><br><br><br>
+                    <label for="year">Year:</label>
+        <select name="year" >
+
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+        </select>
+                    <br>
+                    <br>
+                    <button type="submit">Capture</button><br>
+                <br><br></form>
+            <form action="/" ><input type="submit" value="Back"></form>
+
+
+        </div>
+    </div>
+
+    <script>
+        let videoStream;
+
+        // Function to switch to the Upload Form
+        function switchToUpload() {
+            document.getElementById('uploadForm').classList.add('active');
+            document.getElementById('cameraForm').classList.remove('active');
+        }
+
+        // Function to switch to the Camera Form
+        function switchToCamera() {
+            document.getElementById('uploadForm').classList.remove('active');
+            document.getElementById('cameraForm').classList.add('active');
+        }
+
+        // Function to start the camera and video feed
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    videoStream = stream;
+                    document.getElementById('video').srcObject = stream;
+                })
+                .catch(function (error) {
+                    alert("Error accessing camera: " + error);
+                });
+        }
+
+        // Function to stop the camera feed
+        function stopCamera() {
+            if (videoStream) {
+                let tracks = videoStream.getTracks();
+                tracks.forEach(track => track.stop());
+                document.getElementById('video').srcObject = null;
+            }
+        }
+
+        // Function to preview the uploaded image
+        function previewImage(event) {
+            const image = document.getElementById('uploadedImage');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            image.style.display = 'block';
+        }
+
+        // Function to handle the image button click
+        function handleImageClick(event) {
+            event.preventDefault(); // Prevent the form submission
+            document.getElementById('imageInput').click(); // Trigger the file input click
+        }
+
+        // Function to handle the "Train" button
+        function train() {
+    const activeForm = document.querySelector('.form-container.active');
+    const studentNameInput = activeForm.querySelector('input[name="studentName"]');
+    const studentName = studentNameInput ? studentNameInput.value : "";
+    const imageInput = document.getElementById('imageInput');
+    const imageFile = imageInput.files[0];
+
+    if (!studentName || !imageFile) {
+        alert("Please provide both the student name and an image.");
+        return;
+    }
+    const year=document.getElementById('year').value;
+
+    const formData = new FormData();
+    formData.append("studentName", studentName);
+    formData.append("image", imageFile);
+    formData.append("year", year);
+
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Image uploaded and saved successfully!");
+    })
+    .catch(error => {
+        alert("Error uploading image: " + error);
+    });
+}
+
+    </script>
+</body>
+</html>

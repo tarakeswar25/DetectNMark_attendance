@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+</head>
+<body>
+    <h2>Filter Student Data</h2>
+
+    <form action="/fetch" method="POST">
+        <label for="year">Year:</label>
+        <select name="year" id="year">
+            <option value="">All</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+        </select>
+
+        <label for="date">Date:</label>
+        <select name="date" id="date">
+            <option value="all">All</option>
+            <option value="today">Today</option>
+            <option value="this_month">This Month</option>
+        </select>
+
+        <label for="name">Student Name:</label>
+        <select name="name" id="name">
+            <option value="all">All Students</option>
+            {% for student in student_names %}
+                <option value="{{ student }}">{{ student }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="period">period:</label>
+        <select name="period" id="period">
+            <option value="all">All periods</option>
+            <option value="1">1st</option>
+            <option value="2">2nd </option>
+            <option value="3">3rd </option>
+            <option value="4">4th </option>
+            <option value="5">5th </option>
+            <option value="6">6th </option>
+            <option value="7">7th </option>
+
+        </select>
+
+
+        <label for="status">Status:</label>
+        <select name="status" id="status">
+            <option value="">All</option>
+            <option value="P">present</option>
+            <option value="Ab">Absent</option>
+        </select>
+        <button type="submit">Fetch</button>
+    </form>
+
+    <h3>Student Records</h3>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Date</th>
+            <th>period</th>
+            <th>Time</th>
+            <th>Status</th>
+
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student[0] }}</td>
+            <td>{{ student[1] }}</td>
+            <td>{{ student[2] }}</td>
+            <td>{{ student[3] }}</td>
+            <td>{{ student[4] }}</td>
+            <td>{{ student[5] }}</td>
+            <td>{{ student[6] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+<script>
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
+
+
